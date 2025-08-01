@@ -1,5 +1,4 @@
 class Graph:
-    def __init__(self, graph_data=None):
-        if graph_data is not None:
-            self.graph_data = graph_data
-        self.graph_data = graph_data
+    def __init__(self, vertices=0):
+        if vertices is not 0:
+            self.vertices = vertices
