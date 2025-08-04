@@ -1,4 +1,7 @@
+
+
 class Graph:
-    def __init__(self, vertices=0):
-        if vertices is not 0:
-            self.vertices = vertices
+    def __init__(self, adjacency_info=None):
+        self._adjacency_info = adjacency_info
+
+    
