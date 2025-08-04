@@ -71,3 +71,6 @@ class AdjacencyList:
         return vertex_two.vertex_number in self._dictionary.get(
             vertex_one.vertex_number, []
         )
+    
+    def get_adjacency_info(self):
+        return self._dictionary
