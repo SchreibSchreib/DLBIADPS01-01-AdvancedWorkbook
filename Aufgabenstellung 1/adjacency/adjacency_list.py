@@ -1,11 +1,11 @@
 from graph.components.edge import Edge
 from graph.components.vertex import Vertex
-from typing import Dict, List
+from typing import Dict, Set
 
 
 class AdjacencyList:
     def __init__(self, filepath=None):
-        self._dictionary: Dict[int, List[int]] = {}
+        self._dictionary: Dict[int, Set[int]] = {}
 
         if filepath is not None:
             self._load_graph_from_file(filepath)
@@ -14,6 +14,9 @@ class AdjacencyList:
         with open(filepath, "r") as file:
             for line in file:
                 parts = line.strip().split()
+                if len(parts) != 2:
+                    print(f"Skipped line: {line}: invalid format")
+                    continue
                 vertex_one, vertex_two = map(int, parts)
                 self.add_vertex(Vertex(vertex_one))
                 self.add_vertex(Vertex(vertex_two))
@@ -26,7 +29,7 @@ class AdjacencyList:
 
     def add_vertex(self, vertex):
         if not self._vertex_exists(vertex):
-            self._dictionary[vertex.vertex_number] = []
+            self._dictionary[vertex.vertex_number] = set()
         else:
             print(f"Vertex {vertex.vertex_number} already exists.")
 
@@ -51,8 +54,8 @@ class AdjacencyList:
             print(f"Failed: Vertex {number_vertex_two} is not found.")
 
         else:
-            self._dictionary[number_vertex_one].append(number_vertex_two)
-            self._dictionary[number_vertex_two].append(number_vertex_one)
+            self._dictionary[number_vertex_one].add(number_vertex_two)
+            self._dictionary[number_vertex_two].add(number_vertex_one)
 
     def remove_edge(self, edge):
         vertex_one, vertex_two = edge.vertices
