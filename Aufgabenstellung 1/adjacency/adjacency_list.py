@@ -4,23 +4,22 @@ from typing import Dict, Set
 
 
 class AdjacencyList:
-    def __init__(self, filepath=None):
+    def __init__(self, data=None):
         self._dictionary: Dict[int, Set[int]] = {}
 
-        if filepath is not None:
-            self._load_graph_from_file(filepath)
+        if data is not None:
+            self._load_graph_from_file(data)
 
-    def _load_graph_from_file(self, filepath):
-        with open(filepath, "r") as file:
-            for line in file:
-                parts = line.strip().split()
-                if len(parts) != 2:
-                    print(f"Skipped line: {line}: invalid format")
-                    continue
-                vertex_one, vertex_two = map(int, parts)
-                self.add_vertex(Vertex(vertex_one))
-                self.add_vertex(Vertex(vertex_two))
-                self.add_edge(Edge(Vertex(vertex_one), Vertex(vertex_two)))
+    def _load_graph_from_file(self, data):
+        for line in data:
+            parts = line.strip().split()
+            if len(parts) != 2:
+                print(f"Skipped line: {line}: invalid format")
+                continue
+            vertex_one, vertex_two = map(int, parts)
+            self.add_vertex(Vertex(vertex_one))
+            self.add_vertex(Vertex(vertex_two))
+            self.add_edge(Edge(Vertex(vertex_one), Vertex(vertex_two)))
 
     def _vertex_exists(self, vertex):
         number_of_vertex = vertex.vertex_number

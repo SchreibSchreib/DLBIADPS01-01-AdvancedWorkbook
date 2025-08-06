@@ -3,30 +3,32 @@ from graph.components.vertex import Vertex
 
 
 class AdjacencyMatrix:
-    def __init__(self, filepath=None):
+    def __init__(self, data=None):
 
-        if filepath is not None:
-            edges, max_node = self._load_graph_from_file(filepath)
-            self._matrix = self._create_matrix(edges, max_node)
+        if data is not None:
+            edges, max_node = self._load_graph_from_file(data)
+            self._matrix, self._existing_nodes = self._create_matrix(
+                edges, max_node + 1
+            )
 
-    def _load_graph_from_file(self, filepath):
+    def _load_graph_from_file(self, data):
         edges = []
         max_node = 0
 
-        with open(filepath, "r") as file:
-            for line in file:
-                parts = line.strip().split()
-                if len(parts) != 2:
-                    print(f"Skipped line: {line}: invalid format")
-                    continue
-                vertex_one, vertex_two = map(int, parts)
-                edges.append((vertex_one, vertex_two))
-                max_node = max(max_node, vertex_one, vertex_two)
+        for line in data:
+            parts = line.strip().split()
+            if len(parts) != 2:
+                print(f"Skipped line: {line}: invalid format")
+                continue
+            vertex_one, vertex_two = map(int, parts)
+            edges.append((vertex_one, vertex_two))
+            max_node = max(max_node, vertex_one, vertex_two)
 
         return edges, max_node
 
     def _create_matrix(self, edges, max_node):
         matrix = []
+        existing_nodes = set()
 
         for y_index in range(max_node):
             row = []
@@ -34,31 +36,31 @@ class AdjacencyMatrix:
                 row.append(0)
             matrix.append(row)
 
-            for vertex_one, vertex_two in edges:
-                matrix[vertex_one][vertex_two] = 1
-                matrix[vertex_two][vertex_one] = 1
+        for vertex_one, vertex_two in edges:
+            matrix[vertex_one][vertex_two] = 1
+            matrix[vertex_two][vertex_one] = 1
 
-        return matrix
+            existing_nodes.add(vertex_one)
+            existing_nodes.add(vertex_two)
+
+        return matrix, existing_nodes
 
     def _vertex_exists(self, vertex):
-        number_of_vertex = vertex.vertex_number
-
-        return number_of_vertex in self._matrix
+        return vertex.vertex_number() in self._existing_nodes
 
     def add_vertex(self, vertex):
         if not self._vertex_exists(vertex):
-            self._matrix[vertex.vertex_number] = []
+            self._existing_nodes.add(vertex.vertex_number)
         else:
             print(f"Vertex {vertex.vertex_number} already exists.")
 
     def remove_vertex(self, vertex):
         if not self._vertex_exists(vertex):
             print(f"Failed: Vertex {vertex.vertex_number} does not exist.")
-
         else:
-            for connected_vertex in self._matrix[vertex.vertex_number]:
-                self._matrix[connected_vertex].remove(vertex.vertex_number)
-            del self._matrix[vertex.vertex_number]
+            self._existing_nodes.remove(vertex.vertex_number)
+            for entry in self._matrix[vertex.vertex_number]:
+                entry = 0
 
     def add_edge(self, edge):
         vertex_one, vertex_two = edge.vertices
@@ -72,8 +74,8 @@ class AdjacencyMatrix:
             print(f"Failed: Vertex {number_vertex_two} is not found.")
 
         else:
-            self._matrix[number_vertex_one].add(number_vertex_two)
-            self._matrix[number_vertex_two].add(number_vertex_one)
+            self._matrix[number_vertex_one][number_vertex_two] = 1
+            self._matrix[number_vertex_two][number_vertex_one] = 1
 
     def remove_edge(self, edge):
         vertex_one, vertex_two = edge.vertices
@@ -81,17 +83,18 @@ class AdjacencyMatrix:
         vertex_two_number = vertex_two.vertex_number
 
         if self._vertex_exists(vertex_one):
-            self._matrix[vertex_one_number].remove(vertex_two_number)
-            self._matrix[vertex_two_number].remove(vertex_one_number)
+            self._matrix[vertex_one_number][vertex_two_number] = 0
+            self._matrix[vertex_two_number][vertex_one_number] = 0
 
         else:
             print(f"Failed: No edge found between {vertex_one} and {vertex_two}")
 
     def exist_path(self, edge):
         vertex_one, vertex_two = edge.vertices
-        return vertex_two.vertex_number in self._matrix.get(
-            vertex_one.vertex_number, []
-        )
+        return self._matrix[vertex_two.vertex_number][vertex_one.vertex_number] == 1
 
     def get_adjacency_info(self):
         return self._matrix
+    
+    def vertex_exist(self, vertex_number):
+        return vertex_number in self._existing_nodes
