@@ -11,14 +11,15 @@ class AdjacencyList:
             self._load_graph_from_file(data)
 
     def _load_graph_from_file(self, data):
-        for line in data:
+        for index in range(data.num_vertices):
+            self.add_vertex(Vertex(index))
+
+        for line in data.output:
             parts = line.strip().split()
             if len(parts) != 2:
                 print(f"Skipped line: {line}: invalid format")
                 continue
             vertex_one, vertex_two = map(int, parts)
-            self.add_vertex(Vertex(vertex_one))
-            self.add_vertex(Vertex(vertex_two))
             self.add_edge(Edge(Vertex(vertex_one), Vertex(vertex_two)))
 
     def _vertex_exists(self, vertex):

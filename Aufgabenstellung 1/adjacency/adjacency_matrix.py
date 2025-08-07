@@ -6,16 +6,20 @@ class AdjacencyMatrix:
     def __init__(self, data=None):
 
         if data is not None:
-            edges, max_node = self._load_graph_from_file(data)
-            self._matrix, self._existing_nodes = self._create_matrix(
+            edges, max_node, self._existing_nodes = self._load_graph_from_file(data)
+            self._matrix = self._create_matrix(
                 edges, max_node + 1
             )
 
     def _load_graph_from_file(self, data):
         edges = []
         max_node = 0
+        existing_nodes = set()
 
-        for line in data:
+        for index in range(data.num_vertices):
+            existing_nodes.add(index)
+
+        for line in data.output:
             parts = line.strip().split()
             if len(parts) != 2:
                 print(f"Skipped line: {line}: invalid format")
@@ -24,11 +28,11 @@ class AdjacencyMatrix:
             edges.append((vertex_one, vertex_two))
             max_node = max(max_node, vertex_one, vertex_two)
 
-        return edges, max_node
+        return edges, max_node, existing_nodes
 
     def _create_matrix(self, edges, max_node):
         matrix = []
-        existing_nodes = set()
+
 
         for y_index in range(max_node):
             row = []
@@ -40,10 +44,7 @@ class AdjacencyMatrix:
             matrix[vertex_one][vertex_two] = 1
             matrix[vertex_two][vertex_one] = 1
 
-            existing_nodes.add(vertex_one)
-            existing_nodes.add(vertex_two)
-
-        return matrix, existing_nodes
+        return matrix
 
     def _vertex_exists(self, vertex):
         return vertex.vertex_number() in self._existing_nodes
