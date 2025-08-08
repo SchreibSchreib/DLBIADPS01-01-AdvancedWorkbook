@@ -1,101 +1,64 @@
-from graph.components.edge import Edge
-from graph.components.vertex import Vertex
-
-
 class AdjacencyMatrix:
-    def __init__(self, data=None):
+    def __init__(self, graph_data=None):
+        self.matrix = []
+        self._existing_nodes = set()
 
-        if data is not None:
-            edges, max_node, self._existing_nodes = self._load_graph_from_file(data)
-            self._matrix = self._create_matrix(
-                edges, max_node + 1
-            )
+        if graph_data:
+            self._existing_nodes = set(range(graph_data.num_vertices))
+            self.matrix = [
+                [0] * graph_data.num_vertices for i in range(graph_data.num_vertices)
+            ]
+            self._create_matrix(graph_data)
 
-    def _load_graph_from_file(self, data):
-        edges = []
-        max_node = 0
-        existing_nodes = set()
+    def _create_matrix(self, graph_data):
+        for line in graph_data.output:
+            try:
+                number_vertex_one, number_vertex_two = map(int, line.split())
+                self.add_edge(number_vertex_one, number_vertex_two)
+            except ValueError:
+                print(f"Skipped invalid value: {line}")
 
-        for index in range(data.num_vertices):
-            existing_nodes.add(index)
+    def _vertex_exists(self, vertex_number):
+        return vertex_number in self._existing_nodes
 
-        for line in data.output:
-            parts = line.strip().split()
-            if len(parts) != 2:
-                print(f"Skipped line: {line}: invalid format")
-                continue
-            vertex_one, vertex_two = map(int, parts)
-            edges.append((vertex_one, vertex_two))
-            max_node = max(max_node, vertex_one, vertex_two)
+    def _expand_matrix(self):
+        for row in self.matrix:
+            row.append(0)
 
-        return edges, max_node, existing_nodes
+        self.matrix.append([0] * (len(self.matrix) + 1))
 
-    def _create_matrix(self, edges, max_node):
-        matrix = []
+    def _reduce_matrix(self, index):
+        if len(self.matrix) == 0:
+            return
 
+        self.matrix.pop(index)
+        for row in self.matrix:
+            row.pop(index)
 
-        for y_index in range(max_node):
-            row = []
-            for x_index in range(max_node):
-                row.append(0)
-            matrix.append(row)
+    def add_vertex(self):
+        self._existing_nodes.add(len(self._existing_nodes))
+        self._expand_matrix()
 
-        for vertex_one, vertex_two in edges:
-            matrix[vertex_one][vertex_two] = 1
-            matrix[vertex_two][vertex_one] = 1
+    def remove_vertex(self, index):
+        self._existing_nodes.remove(len(self._existing_nodes) - 1)
+        self._reduce_matrix(index)
 
-        return matrix
+    def add_edge(self, number_vertex_one, number_vertex_two):
+        if self._vertex_exists(number_vertex_one) and self._vertex_exists(
+            number_vertex_two
+        ):
+            self.matrix[number_vertex_one][number_vertex_two] = 1
+            self.matrix[number_vertex_two][number_vertex_one] = 1
 
-    def _vertex_exists(self, vertex):
-        return vertex.vertex_number() in self._existing_nodes
+    def remove_edge(self, number_vertex_one, number_vertex_two):
+        if self._vertex_exists(number_vertex_one) and self._vertex_exists(
+            number_vertex_two
+        ):
+            self.matrix[number_vertex_one][number_vertex_two] = 0
+            self.matrix[number_vertex_two][number_vertex_one] = 0
 
-    def add_vertex(self, vertex):
-        if not self._vertex_exists(vertex):
-            self._existing_nodes.add(vertex.vertex_number)
-        else:
-            print(f"Vertex {vertex.vertex_number} already exists.")
-
-    def remove_vertex(self, vertex):
-        if not self._vertex_exists(vertex):
-            print(f"Failed: Vertex {vertex.vertex_number} does not exist.")
-        else:
-            self._existing_nodes.remove(vertex.vertex_number)
-            for entry in self._matrix[vertex.vertex_number]:
-                entry = 0
-
-    def add_edge(self, edge):
-        vertex_one, vertex_two = edge.vertices
-        number_vertex_one = vertex_one.vertex_number
-        number_vertex_two = vertex_two.vertex_number
-
-        if not self._vertex_exists(vertex_one):
-            print(f"Failed: Vertex {number_vertex_one} is not found.")
-
-        elif not self._vertex_exists(vertex_two):
-            print(f"Failed: Vertex {number_vertex_two} is not found.")
-
-        else:
-            self._matrix[number_vertex_one][number_vertex_two] = 1
-            self._matrix[number_vertex_two][number_vertex_one] = 1
-
-    def remove_edge(self, edge):
-        vertex_one, vertex_two = edge.vertices
-        vertex_one_number = vertex_one.vertex_number
-        vertex_two_number = vertex_two.vertex_number
-
-        if self._vertex_exists(vertex_one):
-            self._matrix[vertex_one_number][vertex_two_number] = 0
-            self._matrix[vertex_two_number][vertex_one_number] = 0
-
-        else:
-            print(f"Failed: No edge found between {vertex_one} and {vertex_two}")
-
-    def exist_path(self, edge):
-        vertex_one, vertex_two = edge.vertices
-        return self._matrix[vertex_two.vertex_number][vertex_one.vertex_number] == 1
+    def exist_path(self, number_vertex_one, number_vertex_two):
+        return self.matrix[number_vertex_one][number_vertex_two] == 1
 
     def get_adjacency_info(self):
-        return self._matrix
-    
-    def vertex_exist(self, vertex_number):
-        return vertex_number in self._existing_nodes
+        return self.matrix

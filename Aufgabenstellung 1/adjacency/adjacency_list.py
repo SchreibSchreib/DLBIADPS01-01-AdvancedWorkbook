@@ -1,79 +1,60 @@
-from graph.components.edge import Edge
-from graph.components.vertex import Vertex
 from typing import Dict, Set
 
 
 class AdjacencyList:
-    def __init__(self, data=None):
-        self._dictionary: Dict[int, Set[int]] = {}
+    def __init__(self, graph_data=None):
+        self.dictionary: Dict[int, Set[int]] = {}
 
-        if data is not None:
-            self._load_graph_from_file(data)
+        if graph_data:
+            self._load_graph_from_file(graph_data)
 
-    def _load_graph_from_file(self, data):
-        for index in range(data.num_vertices):
-            self.add_vertex(Vertex(index))
+    def _load_graph_from_file(self, graph_data):
+        for index in range(graph_data.num_vertices):
+            self.add_vertex()
 
-        for line in data.output:
-            parts = line.strip().split()
-            if len(parts) != 2:
-                print(f"Skipped line: {line}: invalid format")
-                continue
-            vertex_one, vertex_two = map(int, parts)
-            self.add_edge(Edge(Vertex(vertex_one), Vertex(vertex_two)))
+        for line in graph_data.output:
+            try:
+                number_vertex_one, number_vertex_two = map(int, line.strip().split())
+                self.add_edge(number_vertex_one, number_vertex_two)
+            except ValueError:
+                print(f"Skipped invalid value: {line}")
 
-    def _vertex_exists(self, vertex):
-        number_of_vertex = vertex.vertex_number
+    def _vertex_exists(self, vertex_number):
+        return vertex_number in self.dictionary
 
-        return number_of_vertex in self._dictionary
+    def add_vertex(self):
+        self.dictionary[len(self.dictionary)] = set()
 
-    def add_vertex(self, vertex):
-        if not self._vertex_exists(vertex):
-            self._dictionary[vertex.vertex_number] = set()
-        else:
-            print(f"Vertex {vertex.vertex_number} already exists.")
+    def remove_vertex(self, vertex_number):
+        if not self._vertex_exists(vertex_number):
+            print(f"Failed: Vertex {vertex_number} does not exist.")
+            return
+        
+        for connected_vertex in self.dictionary[vertex_number]:
+            self.dictionary[connected_vertex].discard(vertex_number)
+        del self.dictionary[vertex_number]
 
-    def remove_vertex(self, vertex):
-        if not self._vertex_exists(vertex):
-            print(f"Failed: Vertex {vertex.vertex_number} does not exist.")
+    def add_edge(self, number_vertex_one, number_vertex_two):
+        if not (self._vertex_exists(number_vertex_one)
+            and self._vertex_exists(number_vertex_two)):
+            print(f"Failed: One or both vertices not found: {number_vertex_one}, {number_vertex_two}")
+            return
 
-        else:
-            for connected_vertex in self._dictionary[vertex.vertex_number]:
-                self._dictionary[connected_vertex].remove(vertex.vertex_number)
-            del self._dictionary[vertex.vertex_number]
+        self.dictionary[number_vertex_one].add(number_vertex_two)
+        self.dictionary[number_vertex_two].add(number_vertex_one)
 
-    def add_edge(self, edge):
-        vertex_one, vertex_two = edge.vertices
-        number_vertex_one = vertex_one.vertex_number
-        number_vertex_two = vertex_two.vertex_number
-
-        if not self._vertex_exists(vertex_one):
-            print(f"Failed: Vertex {number_vertex_one} is not found.")
-
-        elif not self._vertex_exists(vertex_two):
-            print(f"Failed: Vertex {number_vertex_two} is not found.")
-
-        else:
-            self._dictionary[number_vertex_one].add(number_vertex_two)
-            self._dictionary[number_vertex_two].add(number_vertex_one)
-
-    def remove_edge(self, edge):
-        vertex_one, vertex_two = edge.vertices
-        vertex_one_number = vertex_one.vertex_number
-        vertex_two_number = vertex_two.vertex_number
-
-        if self._vertex_exists(vertex_one):
-            self._dictionary[vertex_one_number].remove(vertex_two_number)
-            self._dictionary[vertex_two_number].remove(vertex_one_number)
-
-        else:
-            print(f"Failed: No edge found between {vertex_one} and {vertex_two}")
+    def remove_edge(self, number_vertex_one, number_vertex_two):
+        if not (self._vertex_exists(number_vertex_one)
+            and self._vertex_exists(number_vertex_two)):
+            print(f"Failed: One or both vertices not found: {number_vertex_one}, {number_vertex_two}")
+            return
+        
+        self.dictionary[number_vertex_one].discard(number_vertex_two)
+        self.dictionary[number_vertex_two].discard(number_vertex_one)
 
     def exist_path(self, edge):
         vertex_one, vertex_two = edge.vertices
-        return vertex_two.vertex_number in self._dictionary.get(
-            vertex_one.vertex_number, []
-        )
-    
+        return vertex_two.number in self.dictionary.get(vertex_one.number, [])
+
     def get_adjacency_info(self):
-        return self._dictionary
+        return self.dictionary
