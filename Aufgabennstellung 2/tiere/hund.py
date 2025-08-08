@@ -6,10 +6,10 @@ class Hund(Tier):
         super().__init__(name, alter, gewicht, mikrochip_id, geraeusch)
         self._gassi_gehen_zeit = gassi_gehen_zeit
     
-    def bellen(self):
+    def geraeusch_machen(self):
         print(f"{self.name} bellt: {self.geraeusch}!")
 
-    def gassi_gehen(self):
+    def aktivität(self):
         print(f"{self.name} muss spätestens um {self._gassi_gehen_zeit} Gassi gehen.")
 
     

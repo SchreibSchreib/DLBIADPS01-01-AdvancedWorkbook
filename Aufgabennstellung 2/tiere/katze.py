@@ -6,8 +6,8 @@ class Katze(Tier):
         super().__init__(name, alter, gewicht, mikrochip_id, geraeusch)
         self.lieblingsspielzeug = lieblingsspielzeug
     
-    def miau(self):
+    def geraeusch_machen(self):
         print(f"{self.name} miaut: {self.geraeusch}!")
 
-    def klettern(self):
+    def aktivität(self):
         print(f"{self.name} klettert zu ihrem Lieblingsspielzeug ({self.lieblingsspielzeug}).")

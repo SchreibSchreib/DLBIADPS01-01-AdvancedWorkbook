@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Tier(ABC):
@@ -8,3 +8,11 @@ class Tier(ABC):
         self.gewicht = gewicht
         self.mikrochip_id = mikrochip_id
         self.geraeusch = geraeusch
+
+    @abstractmethod
+    def geraeusch_machen(self):
+        pass
+
+    @abstractmethod
+    def aktivität(self):
+        pass
