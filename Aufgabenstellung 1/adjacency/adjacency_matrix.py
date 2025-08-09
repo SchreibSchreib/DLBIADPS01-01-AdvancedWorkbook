@@ -57,8 +57,20 @@ class AdjacencyMatrix:
             self.matrix[number_vertex_one][number_vertex_two] = 0
             self.matrix[number_vertex_two][number_vertex_one] = 0
 
-    def exist_path(self, number_vertex_one, number_vertex_two):
-        return self.matrix[number_vertex_one][number_vertex_two] == 1
+    def exist_path(self, number_vertex_one, number_vertex_two, visited_vertices=None):
+        if visited_vertices is None:
+            visited_vertices = set()
+
+        if number_vertex_one == number_vertex_two:
+            return True
+        
+        visited_vertices.add(number_vertex_one)
+
+        for neighbour, list_value in enumerate(self.matrix[number_vertex_one]):
+            if list_value == 1 and neighbour not in visited_vertices:
+                if self.exist_path(neighbour, number_vertex_two, visited_vertices):
+                    return True
+        return False
 
     def get_adjacency_info(self):
         return self.matrix

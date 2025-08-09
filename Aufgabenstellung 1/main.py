@@ -5,6 +5,7 @@ from graph.graph import Graph
 
 test = AdjacencyList(GraphEdgeGenerator(10,10))
 test2 = AdjacencyMatrix(GraphEdgeGenerator(10,10))
+print(f"{test2.exist_path(3,5)}")
 test_graph = Graph(test)
 test_graph2 = Graph(test2)
 test_graph.draw_graph()
