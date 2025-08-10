@@ -1,4 +1,8 @@
-class AdjacencyMatrix:
+import networkx
+from adjacency.abstract.adjacency_object import AdjacencyObject
+
+
+class AdjacencyMatrix(AdjacencyObject):
     def __init__(self, graph_data=None):
         self.matrix = []
         self._existing_nodes = set()
@@ -29,11 +33,13 @@ class AdjacencyMatrix:
 
     def _reduce_matrix(self, index):
         if len(self.matrix) == 0:
-            return
+            return False
 
         self.matrix.pop(index)
         for row in self.matrix:
             row.pop(index)
+        print("Matrix neu durchnummeriert")
+        return True
 
     def add_vertex(self):
         self._existing_nodes.add(len(self._existing_nodes))
@@ -41,7 +47,7 @@ class AdjacencyMatrix:
 
     def remove_vertex(self, index):
         self._existing_nodes.remove(len(self._existing_nodes) - 1)
-        self._reduce_matrix(index)
+        return self._reduce_matrix(index)
 
     def add_edge(self, number_vertex_one, number_vertex_two):
         if self._vertex_exists(number_vertex_one) and self._vertex_exists(
@@ -49,6 +55,8 @@ class AdjacencyMatrix:
         ):
             self.matrix[number_vertex_one][number_vertex_two] = 1
             self.matrix[number_vertex_two][number_vertex_one] = 1
+            return True
+        return False
 
     def remove_edge(self, number_vertex_one, number_vertex_two):
         if self._vertex_exists(number_vertex_one) and self._vertex_exists(
@@ -56,21 +64,31 @@ class AdjacencyMatrix:
         ):
             self.matrix[number_vertex_one][number_vertex_two] = 0
             self.matrix[number_vertex_two][number_vertex_one] = 0
+            return True
+        return False
 
-    def exist_path(self, number_vertex_one, number_vertex_two, visited_vertices=None):
+    def exist_path(self, vertex_start, vertex_to_find, visited_vertices=None):
         if visited_vertices is None:
             visited_vertices = set()
 
-        if number_vertex_one == number_vertex_two:
+        if vertex_start == vertex_to_find:
             return True
-        
-        visited_vertices.add(number_vertex_one)
 
-        for neighbour, list_value in enumerate(self.matrix[number_vertex_one]):
-            if list_value == 1 and neighbour not in visited_vertices:
-                if self.exist_path(neighbour, number_vertex_two, visited_vertices):
+        visited_vertices.add(vertex_start)
+
+        for neighbor, list_value in enumerate(self.matrix[vertex_start]):
+            if list_value == 1 and neighbor not in visited_vertices:
+                if self.exist_path(neighbor, vertex_to_find, visited_vertices):
                     return True
         return False
 
-    def get_adjacency_info(self):
-        return self.matrix
+    def create_networkx_graph(self):
+        graph = networkx.Graph()
+
+        for y_index in range(0, len(self.matrix)):
+            graph.add_node(y_index)
+            for x_index in range(y_index + 1, len(self.matrix)):
+                if self.matrix[y_index][x_index] == 1:
+                    graph.add_edge(x_index, y_index)
+        
+        return graph

@@ -1,35 +1,28 @@
 import networkx
 import matplotlib.pyplot as pyplot
+from adjacency.abstract.adjacency_object import AdjacencyObject
 
 
 class Graph:
-    def __init__(self, adjacency_object=None):
-        if adjacency_object is not None:
-            self._adjacency_object = adjacency_object
-            self._adjacency_info = adjacency_object.get_adjacency_info()
+    def __init__(self, _adjacency_object: AdjacencyObject):
+        self._adjacency_object = _adjacency_object
 
-    def _update_graph_from_list(self):
-        self.graph = networkx.Graph()
+    def add_vertex(self):
+        self._adjacency_object.add_vertex()
 
-        for index, items in self._adjacency_info.items():
-            self.graph.add_node(index)
-            for item in items:
-                if index < item:
-                    self.graph.add_edge(index, item)
+    def remove_vertex(self, vertex_number):
+        return self._adjacency_object.remove_vertex(vertex_number)
 
-    def _update_graph_from_matrix(self):
-        self.graph = networkx.Graph()
+    def add_edge(self, number_vertex_one, number_vertex_two):
+        return self._adjacency_object.add_edge(number_vertex_one, number_vertex_two)
 
-        for y_index in range(0, len(self._adjacency_info)):
-            self.graph.add_node(y_index)
-            for x_index in range(y_index + 1, len(self._adjacency_info)):
-                if self._adjacency_info[y_index][x_index] == 1:
-                    self.graph.add_edge(x_index, y_index)
+    def remove_edge(self, number_vertex_one, number_vertex_two):
+        return self._adjacency_object.remove_edge(number_vertex_one, number_vertex_two)
 
-    def draw_graph(self):
-        if isinstance(self._adjacency_info, dict):
-                self._update_graph_from_list()
-        else:
-            self._update_graph_from_matrix()
-        networkx.draw(self.graph, with_labels=True)
+    def exist_path(self, vertex_start, vertex_to_find):
+        return self._adjacency_object.exist_path(vertex_start, vertex_to_find)
+
+    def draw(self):
+        graph = self._adjacency_object.create_networkx_graph()
+        networkx.draw(graph, with_labels=True)
         pyplot.show(block=True)
