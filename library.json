@@ -1,0 +1,19 @@
+{
+  "library": [
+    {
+      "title": "TestbuchEins",
+      "author": "Felix Schreiber",
+      "release_year": 1995
+    },
+    {
+      "title": "TestbuchZwei",
+      "author": "Felix Schreiber",
+      "release_year": 2000
+    },
+    {
+      "title": "TestbuchDrei",
+      "author": "Felix Schreiber",
+      "release_year": 2005
+    }
+  ]
+}
