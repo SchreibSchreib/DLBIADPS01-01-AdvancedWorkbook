@@ -1,7 +1,7 @@
 from typing import Dict, Set
-
-import networkx
 from adjacency.abstract.adjacency_object import AdjacencyObject
+from memory_profiler import profile
+import networkx
 
 
 class AdjacencyList(AdjacencyObject):
@@ -11,6 +11,7 @@ class AdjacencyList(AdjacencyObject):
         if graph_data:
             self._load_graph_from_file(graph_data)
 
+    @profile
     def _load_graph_from_file(self, graph_data):
         for index in range(graph_data.num_vertices):
             self.add_vertex()
@@ -24,13 +25,15 @@ class AdjacencyList(AdjacencyObject):
 
     def _vertex_exists(self, vertex_number):
         return vertex_number in self.dictionary
-
+    
+    @profile
     def add_vertex(self):
         new_id = 0
         while new_id in self.dictionary:
             new_id += 1
         self.dictionary[new_id] = set()
-
+    
+    @profile
     def remove_vertex(self, vertex_number):
         if not self._vertex_exists(vertex_number):
             return False
@@ -39,7 +42,8 @@ class AdjacencyList(AdjacencyObject):
             self.dictionary[connected_vertex].discard(vertex_number)
         del self.dictionary[vertex_number]
         return True
-
+    
+    @profile
     def add_edge(self, number_vertex_one, number_vertex_two):
         if not (self._vertex_exists(number_vertex_one)
             and self._vertex_exists(number_vertex_two)):
@@ -49,7 +53,8 @@ class AdjacencyList(AdjacencyObject):
         self.dictionary[number_vertex_one].add(number_vertex_two)
         self.dictionary[number_vertex_two].add(number_vertex_one)
         return True
-
+    
+    @profile
     def remove_edge(self, number_vertex_one, number_vertex_two):
         if not (self._vertex_exists(number_vertex_one)
             and self._vertex_exists(number_vertex_two)):
@@ -59,7 +64,8 @@ class AdjacencyList(AdjacencyObject):
         self.dictionary[number_vertex_one].discard(number_vertex_two)
         self.dictionary[number_vertex_two].discard(number_vertex_one)
         return True
-
+    
+    @profile
     def exist_path(self, vertex_start, vertex_to_find, visited_vertices=None):
         if visited_vertices is None:
             visited_vertices = set()
