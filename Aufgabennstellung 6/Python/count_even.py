@@ -7,29 +7,6 @@ def count_even(numbers):
     return counter
 
 
-numberList = [
-    1,
-    2,
-    4,
-    8,
-    9,
-    10,
-    14,
-    6,
-    3,
-    5,
-    7,
-    9,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    200,
-    101,
-    211,
-    122,
-]
+numberList = [1,2,4,8,9,10,14,6,3,5,7,9,13,14,15,16,17,18,200,101,211,122]
 
 print(f"Anzahl gerader Zahlen: {count_even(numberList)}")
