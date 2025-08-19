@@ -1,6 +1,7 @@
-import networkx
+from time_measure.timer import timer
 from adjacency.abstract.adjacency_object import AdjacencyObject
 from memory_profiler import profile
+import networkx
 
 
 class AdjacencyMatrix(AdjacencyObject):
@@ -14,7 +15,8 @@ class AdjacencyMatrix(AdjacencyObject):
                 [0] * graph_data.num_vertices for i in range(graph_data.num_vertices)
             ]
             self._create_matrix(graph_data)
-
+    
+    @timer
     @profile
     def _create_matrix(self, graph_data):
         for line in graph_data.output:
@@ -43,16 +45,19 @@ class AdjacencyMatrix(AdjacencyObject):
         print("Matrix neu durchnummeriert")
         return True
     
+    @timer
     @profile
     def add_vertex(self):
         self._existing_nodes.add(len(self._existing_nodes))
         self._expand_matrix()
     
+    @timer
     @profile
     def remove_vertex(self, index):
         self._existing_nodes.remove(len(self._existing_nodes) - 1)
         return self._reduce_matrix(index)
     
+    @timer
     @profile
     def add_edge(self, number_vertex_one, number_vertex_two):
         if self._vertex_exists(number_vertex_one) and self._vertex_exists(
@@ -63,6 +68,7 @@ class AdjacencyMatrix(AdjacencyObject):
             return True
         return False
     
+    @timer
     @profile
     def remove_edge(self, number_vertex_one, number_vertex_two):
         if self._vertex_exists(number_vertex_one) and self._vertex_exists(
@@ -73,6 +79,7 @@ class AdjacencyMatrix(AdjacencyObject):
             return True
         return False
     
+    @timer
     @profile
     def exist_path(self, vertex_start, vertex_to_find, visited_vertices=None):
         if visited_vertices is None:
