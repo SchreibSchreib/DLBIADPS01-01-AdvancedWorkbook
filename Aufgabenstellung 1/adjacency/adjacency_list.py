@@ -17,14 +17,35 @@ class AdjacencyList(AdjacencyObject):
     @profile
     def _load_graph_from_file(self, graph_data):
         for index in range(graph_data.num_vertices):
-            self.add_vertex()
+            self._add_vertex_no_logging()
 
         for line in graph_data.output:
             try:
                 number_vertex_one, number_vertex_two = map(int, line.strip().split())
-                self.add_edge(number_vertex_one, number_vertex_two)
+                self._add_edge_no_logging(number_vertex_one, number_vertex_two)
             except ValueError:
                 print(f"Skipped invalid value: {line}")
+
+    def _add_vertex_no_logging(self):
+        if self._removed_vertices:
+            key_to_insert = self._removed_vertices.pop(0)
+        else:
+            key_to_insert = len(self.dictionary)
+        self.dictionary[key_to_insert] = set()
+
+    def _add_edge_no_logging(self, number_vertex_one, number_vertex_two):
+        if not (
+            self._vertex_exists(number_vertex_one)
+            and self._vertex_exists(number_vertex_two)
+        ):
+            print(
+                f"Failed: One or both vertices not found: {number_vertex_one}, {number_vertex_two}"
+            )
+            return False
+
+        self.dictionary[number_vertex_one].add(number_vertex_two)
+        self.dictionary[number_vertex_two].add(number_vertex_one)
+        return True
 
     def _vertex_exists(self, vertex_number):
         return vertex_number in self.dictionary
@@ -83,7 +104,6 @@ class AdjacencyList(AdjacencyObject):
         return True
 
     @timer
-    @profile
     def exist_path(self, vertex_start, vertex_to_find, visited_vertices=None):
         if visited_vertices is None:
             visited_vertices = set()

@@ -22,9 +22,18 @@ class AdjacencyMatrix(AdjacencyObject):
         for line in graph_data.output:
             try:
                 number_vertex_one, number_vertex_two = map(int, line.split())
-                self.add_edge(number_vertex_one, number_vertex_two)
+                self._add_edge_no_logging(number_vertex_one, number_vertex_two)
             except ValueError:
                 print(f"Skipped invalid value: {line}")
+
+    def _add_edge_no_logging(self, number_vertex_one, number_vertex_two):
+        if self._vertex_exists(number_vertex_one) and self._vertex_exists(
+            number_vertex_two
+        ):
+            self.matrix[number_vertex_one][number_vertex_two] = 1
+            self.matrix[number_vertex_two][number_vertex_one] = 1
+            return True
+        return False
 
     def _vertex_exists(self, vertex_number):
         return vertex_number in self._existing_nodes
@@ -80,7 +89,6 @@ class AdjacencyMatrix(AdjacencyObject):
         return False
     
     @timer
-    @profile
     def exist_path(self, vertex_start, vertex_to_find, visited_vertices=None):
         if visited_vertices is None:
             visited_vertices = set()

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class AdjacencyObject(ABC):
     @abstractmethod
-    def add_vertex(self) -> None:
+    def add_vertex(self):
         pass
 
     @abstractmethod
