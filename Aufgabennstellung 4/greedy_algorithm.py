@@ -6,12 +6,9 @@ def activities_greedy(activities):
     current_end_time = 0
     number_of_activities = 0
 
-    # Einmaliges lineares durchlaufen der Elemente
     for start_activity, end_activity in activities:
         if start_activity >= current_end_time:
-            # Erhöhen der Anzahl der Aktivitäten
             number_of_activities += 1
-            # Aktualisieren des letzten Endwertes
             current_end_time = end_activity
 
     return number_of_activities
@@ -30,4 +27,4 @@ activities = [
     (8, 12),
     (12, 16),
 ]
-print(f"Non overlapping activities: {activities_greedy(activities)}")
+print(f"Nicht überlappende Aktivitäten: {activities_greedy(activities)}")
