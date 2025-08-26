@@ -10,6 +10,6 @@ class Hund(Tier):
         print(f"{self.name} bellt: {self.geraeusch}!")
 
     def aktivität(self):
-        print(f"{self.name} muss spätestens um {self._gassi_gehen_zeit} Gassi gehen.")
+        print(f"{self.name} geht um {self._gassi_gehen_zeit} Gassi.")
 
     
