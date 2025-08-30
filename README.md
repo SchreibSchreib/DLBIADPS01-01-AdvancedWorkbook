@@ -12,6 +12,8 @@ Dieses Repository enthält den geschriebenen Code zur Abarbeitung des Workbooks
 
 ### Bibliotheken
 
-Die benötigten Bibliotheken für das Projekt können mittels
-\\\pip install -r requirements.txt\\\
+Die benötigten Bibliotheken für das Projekt können mittels:
+
+```pip install -r requirements.txt```
+
 installiert werden oder der "requirements.txt" manuell entnommen werden
