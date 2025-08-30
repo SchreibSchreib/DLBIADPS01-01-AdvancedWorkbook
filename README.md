@@ -8,7 +8,7 @@ Dieses Repository enthält den geschriebenen Code zur Abarbeitung des Workbooks
 - Python Klassenhierarchie zur Abbildung von Polymorphie und Abstraktion
 - Algorithmen mit Greedy- und Dynamischen Ansätzen
 - Rekursive Algorithmen zur Berechnung natürlicher Zahlen
-- Deklarative Haskell- und imperative Python funktionen zur zählung gerader Zahlen
+- Deklarative Haskell- und imperative Python funktionen zur Zählung gerader Zahlen
 
 ### Bibliotheken
 
